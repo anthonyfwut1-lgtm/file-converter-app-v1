@@ -52,12 +52,12 @@ const Compressor = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-1">🗜️ File Compressor</h2>
+      <h2 className="text-xl font-semibold mb-1">File Compressor</h2>
       <p className="text-gray-400 text-sm mb-4">Compress PDF, JPG, PNG, or MP4 files (max 500MB)</p>
       <DropZone onDrop={handleDrop} />
       {file && (
         <p className="mt-2 text-sm text-gray-600">
-          📎 {file.name} ({(originalSize / 1024 / 1024).toFixed(2)} MB)
+          {file.name} ({(originalSize / 1024 / 1024).toFixed(2)} MB)
         </p>
       )}
       {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
@@ -70,18 +70,18 @@ const Compressor = () => {
       </button>
       {loading && <Spinner />}
       {result && (
-        <div>
-          <div className="mt-3 p-3 bg-green-50 rounded text-sm">
+        <div className="mt-3">
+          <div className="p-3 bg-green-50 rounded text-sm">
             <p>Original: <strong>{(originalSize / 1024 / 1024).toFixed(2)} MB</strong></p>
             <p>Compressed: <strong>{(compressedSize / 1024 / 1024).toFixed(2)} MB</strong></p>
-            <p className="text-green-600 font-semibold">Saved: {saved}% 🎉</p>
+            <p className="text-green-600 font-semibold">Saved: {saved}%</p>
           </div>
           
             href={result}
-            download={`compressed_${file.name}`}
+            download={"compressed_" + file.name}
             className="mt-3 block text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
           >
-            ⬇️ Download Compressed File
+            Download Compressed File
           </a>
         </div>
       )}
