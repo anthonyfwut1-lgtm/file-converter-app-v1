@@ -7,7 +7,7 @@ const os = require('os');
 const sharp = require('sharp');
 
 const app = express();
-const upload = multer({ limits: { fileSize: 20 * 1024 * 1024 } });
+const upload = multer({ limits: { fileSize: 500 * 1024 * 1024 } });
 
 app.use(express.static('public'));
 
@@ -59,13 +59,13 @@ app.post('/api/word-to-pdf', upload.single('file'), (req, res) => {
   }
 });
 
-// ✅ File Compressor (FIXED: async + separate image handling)
+// ✅ File Compressor (支持 PDF, JPG, PNG, MP4)
 app.post('/api/compress', upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
   const ext = req.file.originalname.split('.').pop().toLowerCase();
-  if (!['pdf', 'jpg', 'jpeg', 'png'].includes(ext)) {
-    return res.status(400).json({ error: 'Invalid file type. Must be PDF, JPG, or PNG.' });
+  if (!['pdf', 'jpg', 'jpeg', 'png', 'mp4'].includes(ext)) {
+    return res.status(400).json({ error: 'Invalid file type. Must be PDF, JPG, PNG, or MP4.' });
   }
 
   const tempDir = os.tmpdir();
@@ -76,13 +76,12 @@ app.post('/api/compress', upload.single('file'), async (req, res) => {
 
   try {
     if (ext === 'pdf') {
-      // Use Ghostscript to compress PDF
       execSync(`gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${outputPath}" "${inputPath}"`);
+    } else if (ext === 'mp4') {
+      execSync(`ffmpeg -i "${inputPath}" -vcodec libx264 -crf 28 -preset fast "${outputPath}" -y`, { timeout: 300000 });
     } else if (ext === 'png') {
-      // ✅ FIXED: PNG compression
       await sharp(inputPath).png({ compressionLevel: 8 }).toFile(outputPath);
     } else {
-      // ✅ FIXED: JPG/JPEG compression
       await sharp(inputPath).jpeg({ quality: 80 }).toFile(outputPath);
     }
 
@@ -93,7 +92,7 @@ app.post('/api/compress', upload.single('file'), async (req, res) => {
     });
   } catch (err) {
     try { fs.unlinkSync(inputPath); } catch {}
-    res.status(500).json({ error: 'Compression failed. Make sure Ghostscript is installed for PDF.' });
+    res.status(500).json({ error: 'Compression failed.' });
   }
 });
 

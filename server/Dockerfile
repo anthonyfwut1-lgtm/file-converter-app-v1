@@ -3,6 +3,7 @@ FROM node:18
 RUN apt-get update && apt-get install -y \
     libreoffice \
     ghostscript \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

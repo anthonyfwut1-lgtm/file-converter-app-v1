@@ -13,13 +13,13 @@ const Compressor = () => {
 
   const handleDrop = (acceptedFiles) => {
     const uploadedFile = acceptedFiles[0];
-    if (uploadedFile.size > 20 * 1024 * 1024) {
-      setError('File too large (max 20MB)');
+    if (uploadedFile.size > 500 * 1024 * 1024) {
+      setError('File too large (max 500MB)');
       return;
     }
     const ext = uploadedFile.name.split('.').pop().toLowerCase();
-    if (!['pdf', 'jpg', 'jpeg', 'png'].includes(ext)) {
-      setError('Invalid file type. Must be PDF, JPG, or PNG.');
+    if (!['pdf', 'jpg', 'jpeg', 'png', 'mp4'].includes(ext)) {
+      setError('Invalid file type. Must be PDF, JPG, PNG, or MP4.');
       return;
     }
     setFile(uploadedFile);
@@ -35,8 +35,9 @@ const Compressor = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await axios.post('/api/compress', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/compress`, formData, {
         responseType: 'blob',
+        timeout: 300000,
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       setResult(url);
@@ -52,7 +53,7 @@ const Compressor = () => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-1">🗜️ File Compressor</h2>
-      <p className="text-gray-400 text-sm mb-4">Compress PDF, JPG, or PNG files</p>
+      <p className="text-gray-400 text-sm mb-4">Compress PDF, JPG, PNG, or MP4 files (max 500MB)</p>
       <DropZone onDrop={handleDrop} />
       {file && (
         <p className="mt-2 text-sm text-gray-600">
@@ -75,7 +76,7 @@ const Compressor = () => {
             <p>Compressed: <strong>{(compressedSize / 1024 / 1024).toFixed(2)} MB</strong></p>
             <p className="text-green-600 font-semibold">Saved: {saved}% 🎉</p>
           </div>
-          <a
+          
             href={result}
             download={`compressed_${file.name}`}
             className="mt-3 block text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
