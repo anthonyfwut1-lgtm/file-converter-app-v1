@@ -70,7 +70,7 @@ const Compressor = () => {
       </button>
       {loading && <Spinner />}
       {result && (
-        <>
+        <div>
           <div className="mt-3 p-3 bg-green-50 rounded text-sm">
             <p>Original: <strong>{(originalSize / 1024 / 1024).toFixed(2)} MB</strong></p>
             <p>Compressed: <strong>{(compressedSize / 1024 / 1024).toFixed(2)} MB</strong></p>
@@ -83,7 +83,7 @@ const Compressor = () => {
           >
             ⬇️ Download Compressed File
           </a>
-        </>
+        </div>
       )}
     </div>
   );
