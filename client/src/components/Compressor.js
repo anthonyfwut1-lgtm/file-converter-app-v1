@@ -35,7 +35,7 @@ const Compressor = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/compress`, formData, {
+      const response = await axios.post(process.env.REACT_APP_API_URL + '/api/compress', formData, {
         responseType: 'blob',
         timeout: 300000,
       });
@@ -76,11 +76,7 @@ const Compressor = () => {
             <p>Compressed: <strong>{(compressedSize / 1024 / 1024).toFixed(2)} MB</strong></p>
             <p className="text-green-600 font-semibold">Saved: {saved}%</p>
           </div>
-          
-            href={result}
-            download={"compressed_" + file.name}
-            className="mt-3 block text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-          >
+          <a href={result} download={"compressed_" + file.name} className="mt-3 block text-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
             Download Compressed File
           </a>
         </div>
